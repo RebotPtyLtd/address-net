@@ -1,6 +1,7 @@
 import gzip
 import csv
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import argparse
 
 from addressnet.lookups import lookup_flat_type, lookup_level_type, lookup_street_type, lookup_street_suffix, \
