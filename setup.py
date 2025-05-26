@@ -10,8 +10,8 @@ setup(
     author_email='hello@jasonrig.by',
     description='Splits Australian addresses into their components',
     extras_require={
-        "tf": ["tensorflow>=1.12,<2.0"],
-        "tf_gpu": ["tensorflow-gpu>=1.12,<2.0"],
+        "tf": ["tensorflow>=2.0,<3.0"],
+        "tf_gpu": ["tensorflow-gpu>=2.0,<3.0"],
     },
     install_requires=[
         'numpy',

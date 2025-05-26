@@ -26,9 +26,8 @@ pip install address-net[tf]     # install TensorFlow (CPU version)
 pip install address-net[tf_gpu] # install TensorFlow (GPU version)
 ```
 
-You will need an appropriate version of TensorFlow installed, ideally greater
-than version 1.12. This is not automatically installed since the CPU and GPU
-versions of TensorFlow exist in separate packages.
+You will need TensorFlow 2 installed. This is not automatically installed since
+the CPU and GPU versions of TensorFlow exist in separate packages.
 
 ## Model output
 This model performs character-level classification, assigning each
