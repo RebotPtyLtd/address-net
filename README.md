@@ -24,6 +24,7 @@ Or from PyPI:
 pip install address-net
 pip install address-net[tf]     # install TensorFlow (CPU version)
 pip install address-net[tf_gpu] # install TensorFlow (GPU version)
+pip install tensorflow-estimator # required for the estimator API
 ```
 
 You will need TensorFlow 2 installed. This is not automatically installed since

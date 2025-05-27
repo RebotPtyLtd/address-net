@@ -2,18 +2,19 @@ from typing import Dict, Optional
 
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+import tensorflow_estimator as tf_estimator
 
 from addressnet.dataset import vocab, n_labels
 
 
-def model_fn(features: Dict[str, tf.Tensor], labels: tf.Tensor, mode: str, params) -> tf.estimator.EstimatorSpec:
+def model_fn(features: Dict[str, tf.Tensor], labels: tf.Tensor, mode: str, params) -> tf_estimator.estimator.EstimatorSpec:
     """
-    The AddressNet model function suitable for tf.estimator.Estimator
+    The AddressNet model function suitable for tf_estimator.estimator.Estimator
     :param features: a dictionary containing tensors for the encoded_text and lengths
     :param labels: a label for each character designating its position in the address
     :param mode: indicates whether the model is being trained, evaluated or used in prediction mode
     :param params: model hyperparameters, including rnn_size and rnn_layers
-    :return: the appropriate tf.estimator.EstimatorSpec for the model mode
+    :return: the appropriate tf_estimator.estimator.EstimatorSpec for the model mode
     """
     encoded_text, lengths = features['encoded_text'], features['lengths']
     rnn_size = params.get("rnn_size", 128)
@@ -22,25 +23,25 @@ def model_fn(features: Dict[str, tf.Tensor], labels: tf.Tensor, mode: str, param
     embeddings = tf.get_variable("embeddings", dtype=tf.float32, initializer=tf.random_normal(shape=(len(vocab), 8)))
     encoded_strings = tf.nn.embedding_lookup(embeddings, encoded_text)
 
-    logits, loss = nnet(encoded_strings, lengths, rnn_layers, rnn_size, labels, mode == tf.estimator.ModeKeys.TRAIN)
+    logits, loss = nnet(encoded_strings, lengths, rnn_layers, rnn_size, labels, mode == tf_estimator.estimator.ModeKeys.TRAIN)
 
     predicted_classes = tf.argmax(logits, axis=2)
 
-    if mode == tf.estimator.ModeKeys.PREDICT:
+    if mode == tf_estimator.estimator.ModeKeys.PREDICT:
         predictions = {
             'class_ids': predicted_classes,
             'probabilities': tf.nn.softmax(logits)
         }
-        return tf.estimator.EstimatorSpec(mode, predictions=predictions)
+        return tf_estimator.estimator.EstimatorSpec(mode, predictions=predictions)
 
-    if mode == tf.estimator.ModeKeys.EVAL:
+    if mode == tf_estimator.estimator.ModeKeys.EVAL:
         metrics = {}
-        return tf.estimator.EstimatorSpec(
+        return tf_estimator.estimator.EstimatorSpec(
             mode, loss=loss, eval_metric_ops=metrics)
 
-    if mode == tf.estimator.ModeKeys.TRAIN:
+    if mode == tf_estimator.estimator.ModeKeys.TRAIN:
         train_op = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(loss, global_step=tf.train.get_global_step())
-        return tf.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
+        return tf_estimator.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
 
 
 def nnet(encoded_strings: tf.Tensor, lengths: tf.Tensor, rnn_layers: int, rnn_size: int, labels: tf.Tensor = None,
