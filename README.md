@@ -131,17 +131,21 @@ simple string similarity algorithm is used to normalise fields such as
 `street_type` and `state`, since we know exhaustively what they should
 be.
 
-## HTTP endpoint
 
-A small HTTP server is included for testing the model from the command
-line. Start the server with:
+## HTTP endpoint test
+A small HTTP server for manual testing is provided in `tests/http_endpoint.py`. Make sure TensorFlow and the `tensorflow-estimator` package are installed, then run:
 
-```bash
+```
 python tests/http_endpoint.py
 ```
 
-Once running, issue a request like:
+The server listens on port 8000. Query it with curl, for example:
 
-```bash
-curl "http://localhost:8000/predict?address=123%20Example%20St"
 ```
+curl "http://localhost:8000/predict?address=10%20High%20Street"
+```
+
+The response contains the reformatted address and a confidence score.
+
+
+
