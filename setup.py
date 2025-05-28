@@ -15,7 +15,9 @@ setup(
     },
     install_requires=[
         'numpy',
-        'textdistance'
+        'textdistance',
+        'requests',
+        'tensorflow-estimator>=2.0,<3.0'
     ],
     include_package_data=True
 )
