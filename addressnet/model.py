@@ -56,21 +56,19 @@ def nnet(encoded_strings: tf.Tensor, lengths: tf.Tensor, rnn_layers: int, rnn_si
     :return: logits and loss (loss will be None if labels is not provided)
     """
 
-    def rnn_cell():
-        probs = 0.8 if training else 1.0
-        return tf.contrib.rnn.DropoutWrapper(tf.contrib.cudnn_rnn.CudnnCompatibleGRUCell(rnn_size),
-                                             state_keep_prob=probs, output_keep_prob=probs)
+    mask = tf.sequence_mask(lengths)
+    rnn_output = encoded_strings
 
-    rnn_cell_fw = tf.nn.rnn_cell.MultiRNNCell([rnn_cell() for _ in range(rnn_layers)])
-    rnn_cell_bw = tf.nn.rnn_cell.MultiRNNCell([rnn_cell() for _ in range(rnn_layers)])
+    for _ in range(rnn_layers):
+        gru_layer = tf.keras.layers.Bidirectional(
+            tf.keras.layers.GRU(rnn_size, return_sequences=True, dropout=0.2)
+        )
+        rnn_output = gru_layer(rnn_output, mask=mask, training=training)
 
-    (rnn_output_fw, rnn_output_bw), states = tf.nn.bidirectional_dynamic_rnn(rnn_cell_fw, rnn_cell_bw, encoded_strings,
-                                                                             lengths, dtype=tf.float32)
-    rnn_output = tf.concat([rnn_output_fw, rnn_output_bw], axis=2)
-    logits = tf.layers.dense(rnn_output, n_labels, activation=tf.nn.elu)
+    logits = tf.keras.layers.Dense(n_labels, activation=tf.nn.elu)(rnn_output)
 
     loss = None
     if labels is not None:
-        mask = tf.sequence_mask(lengths, dtype=tf.float32)
-        loss = tf.losses.softmax_cross_entropy(labels, logits, weights=mask)
+        mask_float = tf.cast(mask, tf.float32)
+        loss = tf.losses.softmax_cross_entropy(labels, logits, weights=mask_float)
     return logits, loss
