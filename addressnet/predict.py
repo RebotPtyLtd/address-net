@@ -3,6 +3,7 @@ from typing import Dict, List, Union
 import textdistance
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
+import tensorflow_estimator as tf_estimator
 
 from addressnet.dataset import predict_input_fn, labels_list
 from addressnet.lookups import street_types, street_type_abbreviation, states, street_suffix_types, flat_types, \
@@ -109,8 +110,8 @@ def normalise_level_type(s: str) -> str:
 
 @lru_cache(maxsize=2)
 def _get_estimator(model_fn, model_dir):
-    return tf.estimator.Estimator(model_fn=model_fn,
-                                  model_dir=model_dir)
+    return tf_estimator.estimator.Estimator(model_fn=model_fn,
+                                            model_dir=model_dir)
 
 
 def predict_one(address: str, model_dir: str = None) -> Dict[str, str]:
