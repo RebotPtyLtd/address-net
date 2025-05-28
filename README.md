@@ -27,8 +27,9 @@ pip install address-net[tf_gpu] # install TensorFlow (GPU version)
 pip install tensorflow-estimator # required for the estimator API
 ```
 
-You will need TensorFlow 2 installed. This is not automatically installed since
-the CPU and GPU versions of TensorFlow exist in separate packages.
+You will need TensorFlow 2 and `tensorflow-estimator` installed. These are not
+automatically installed since the CPU and GPU versions of TensorFlow exist in
+separate packages.
 
 ## Model output
 This model performs character-level classification, assigning each
@@ -130,6 +131,7 @@ simple string similarity algorithm is used to normalise fields such as
 `street_type` and `state`, since we know exhaustively what they should
 be.
 
+
 ## HTTP endpoint test
 A small HTTP server for manual testing is provided in `tests/http_endpoint.py`. Make sure TensorFlow and the `tensorflow-estimator` package are installed, then run:
 
@@ -144,5 +146,6 @@ curl "http://localhost:8000/predict?address=10%20High%20Street"
 ```
 
 The response contains the reformatted address and a confidence score.
+
 
 
